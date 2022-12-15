@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.post('/', postController.uploadPostImage , postController.createPost);
 router.get('/:id',postController.getPostById);
+router.put('/:id',postController.updatePost);
 router.get('/',postController.getAllPosts);
 router.patch('/:id/likePost',postController.likePost);
 

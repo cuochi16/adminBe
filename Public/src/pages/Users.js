@@ -13,6 +13,7 @@ import {
     Typography,
   } from "antd";
 import { getAllUsers,deleteUser } from "../services/userService";
+import Main from "../components/layout/Main";
 
   
 const layout = {
@@ -338,7 +339,8 @@ const validateMessages = {
   setIsModalOpen(false);
   };
     return (
-      <>
+     <Main>
+       <>
         <div className="tabled">
           <Row gutter={[24, 0]}>
             <Col xs="24" xl={24}>
@@ -366,6 +368,7 @@ const validateMessages = {
           </Row>
         </div>
       </>
+     </Main>
     );
   }
   

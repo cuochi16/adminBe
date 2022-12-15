@@ -35,7 +35,7 @@ function Signin() {
             localStorage.setItem("Username",response.data.user[0].username);
             localStorage.setItem("Role",response.data.user[0].role);
             localStorage.setItem("Token",response.data.token);
-            navigate("/users");
+            navigate("/home");
         }
         console.log(response);
       };
