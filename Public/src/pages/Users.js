@@ -138,7 +138,7 @@ const validateMessages = {
           address:user.address,
           role:user.role,
           password:user.password,
-          telephone:user.telephone
+          phone:user.phone
         }}
         >
           <Form.Item
@@ -219,9 +219,7 @@ const validateMessages = {
           >
             <Select>
               <Select.Option value="admin">Admin</Select.Option>
-              <Select.Option value="staff">Staff</Select.Option>
-              <Select.Option value="trainer">Trainer</Select.Option>
-              <Select.Option value="trainee">Trainee</Select.Option>
+              <Select.Option value="">Customer</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item
@@ -236,7 +234,7 @@ const validateMessages = {
             <Input />
           </Form.Item>
           <Form.Item
-            name="telephone"
+            name="phone"
             label="Telephone"
             rules={[
               {
@@ -263,6 +261,7 @@ const validateMessages = {
       ),
     },
   ]
+  console.log(user.phone)
   // const data = [
   //   {
   //     key: "1",
@@ -321,7 +320,6 @@ const validateMessages = {
       })
       .catch((err) => console.log(err));
   }, [data]);
-console.log(data)
 
     const onChange = (e) => console.log(`radio checked:${e.target.value}`);
   
@@ -334,7 +332,9 @@ console.log(data)
       } catch(err) {
         console.log(err);
       } 
+
   console.log('Success:', values);
+  setUser([]);
   setIsModalOpen(false);
   };
     return (

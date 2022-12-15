@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-
+import { useEffect } from "react";
 import {
   Card,
   Col,
@@ -10,12 +10,13 @@ import {
   Button,
   Timeline,
   Radio,
+  Table 
 } from "antd";
 import {
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import Paragraph from "antd/lib/typography/Paragraph";
-
+import { getAllUsers, deleteUser } from "../services/userService";
 import Echart from "../components/chart/EChart";
 import LineChart from "../components/chart/LineChart";
 
@@ -26,6 +27,7 @@ import ava4 from "../assets/images/team-4.jpg";
 
 
 function Home() {
+  const role = localStorage.getItem("Role");
   const { Title, Text } = Typography;
 
   const onChange = (e) => console.log(`radio checked:${e.target.value}`);
@@ -145,41 +147,28 @@ function Home() {
   ];
 
 
-  // Manage Users
+  // Manage admin
   const list = [
     {
-      img: ava1,
-      Title: "Nguyen Quoc Huy",
-      match: <Progress percent={41} size="medium" />,
-      post: "12",
-      email: "huynq@fpt.edu.vn",
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
     },
-
     {
-      img: ava2,
-      Title: "Pham Duc My",
-      match: <Progress percent={36} size="medium" />,
-      post: "0",
-      email: "mypd@fpt.edu.vn",
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
-
     {
-      img: ava3,
-      Title: "Quach Cong Tuan",
-      match: <Progress percent={77} size="medium" />,
-      post: "20",
-      email: "tuanqc@fpt.edu.vn",
+      title: "Match",
+      dataIndex: "match",
+      key: "match",
     },
-
     {
-      img: ava4,
-      Title: "Nguyen Van Manh",
-      match: <Progress percent={95} size="medium" />,
-      post: "2",
-      email: "manhnv@fpt.edu.vn",
+      title: "Post",
+      dataIndex: "post",
+      key: "post",
     },
-   
-    
   ];
 
   const timelineList = [
@@ -215,7 +204,20 @@ function Home() {
     },
   ];
 
-
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    getAllUsers()
+      .then((res) => {
+        const newData = res.data.users;
+        const account = newData.filter((item) => {
+          if (role === "admin") {
+            return item.role === "admin";
+          }
+        });
+        setData(account);
+      })
+      .catch((err) => console.log(err));
+  }, [data]);
   return (
     <>
       <div className="layout-content">
@@ -284,39 +286,16 @@ function Home() {
               </div>
               <div className="ant-list-box table-responsive">
                 <table className="width-100">
-                  <thead>
-                    <tr>
-                      <th>NAME</th>
-                      <th>EMAIL</th>
-                      <th>MATCH</th>
-                      <th>POST</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {list.map((d, index) => (
-                      <tr key={index}>
-                        <td>
-                          <h6>
-                            <img
-                              src={d.img}
-                              alt=""
-                              className="avatar-sm mr-10"
-                            />{" "}
-                            {d.Title}
-                          </h6>
-                        </td>
-                        <td>{d.email}</td>
-                        <td>
-                          <span className="text-xs font-weight-bold">
-                            {d.match}{" "}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="percent-progress">{d.post}</div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
+                  
+                  <Row gutter={[24, 0]}>
+                    <Col xs={24} xl={24} className="mb-24">
+                      <Table
+                        pagination={{ pageSize: 8 }}
+                        columns={list}
+                        dataSource={data}
+                      />
+                    </Col>
+                  </Row>
                 </table>
               </div>
             </Card>

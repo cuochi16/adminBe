@@ -1,5 +1,5 @@
 
-import { Switch, Route, Redirect } from "react-router-dom";
+import {Routes,  Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Billing from "./pages/Billing";
 import Profile from "./pages/Profile";
@@ -15,18 +15,17 @@ import "./assets/styles/responsive.css";
 function App() {
   return (
     <div className="App">
-      <Switch>
-          <Route path="/signin" component={Signin} />
-        <Main>
-          <Route exact path="/dashboard" component={Home} />
-          <Route exact path="/billing" component={Billing} />
-          <Route exact path="/profile" component={Profile} />
-          <Route exact path="/user" component={User} />
-          <Route exact path="/match" component={Match} />
-          <Route exact path="/global" component={Global} />
-          <Redirect from="*" to="/dashboard" />
-        </Main>
-      </Switch>
+      <Main>
+      <Routes>
+        <Route path="/home" element={<Home />} />
+        <Route path="/billing" element={<Billing />} />
+        <Route path="/user" element={<User />} />
+        <Route path="/match" element={<Match />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/global" element={<Global />} />
+        <Route path="/" element={<Signin />} />
+      </Routes>
+      </Main>
     </div>
   );
 }

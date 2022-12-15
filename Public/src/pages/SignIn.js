@@ -1,5 +1,6 @@
-
-import React, { Component } from "react";
+import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import React, { useEffect } from "react";
 import {
   Layout,
   Button,
@@ -17,18 +18,32 @@ function onChange(checked) {
 const { Title } = Typography;
 const { Header, Footer, Content } = Layout;
 
+function Signin() {
+    let navigate = useNavigate();
 
-export default class SignIn extends Component {
-  render() {
-    const onFinish = (values) => {
-      console.log("Success:", values);
-    };
+    useEffect(() => {
+    const username = localStorage.getItem("Username");
+    if(username) {
+      localStorage.clear();
+    }
+    },[]);
 
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
-    return (
-      <>
+    const onFinish = async (values) => {
+        const response = await axios.post('http://localhost:8000/user/login',values);
+        if(response.status === 200) {
+            console.log(response.data.user[0]);
+            localStorage.setItem("Username",response.data.user[0].username);
+            localStorage.setItem("Role",response.data.user[0].role);
+            localStorage.setItem("Token",response.data.token);
+            navigate("/users");
+        }
+        console.log(response);
+      };
+      const onFinishFailed = (errorInfo) => {
+        console.log('Failed:', errorInfo);
+      };
+      return (
+        <>
         <Layout className="layout-default layout-signin">
           <Header
             style={{
@@ -59,7 +74,7 @@ export default class SignIn extends Component {
                   <Form.Item
                     className="username"
                     label="ID"
-                    name="email"
+                    name="username"
                     rules={[
                       {
                         required: true,
@@ -123,6 +138,8 @@ export default class SignIn extends Component {
           </Footer>
         </Layout>
       </>
-    );
-  }
+      );
 }
+
+export default Signin
+

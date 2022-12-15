@@ -29,7 +29,7 @@ const userSchema = new Schema({
     password: {
         type: String
     },
-    telephone: {
+    phone: {
         type: String
     }
 });

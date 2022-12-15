@@ -3,9 +3,10 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const userRoute = require('./route/userRoute');
-const courseRoute = require('./route/courseRoute');
-const categoryRoute = require('./route/categoryRoute');
-const topicRoute = require('./route/topicRoute');
+const orderRoute = require('./route/orderRoute');
+const postRoute = require('./route/postRoute');
+const commentRoutes = require('./route/commentRoutes');
+
 
 const app = express();
 app.use(cors());
@@ -21,7 +22,7 @@ app.use(
 
 // routes
 app.use('/user',userRoute);
-app.use('/course',courseRoute);
-app.use('/category',categoryRoute);
-app.use('/topic',topicRoute);
+app.use('/post',postRoute);
+app.use('/order',orderRoute);
+app.use("/comments",commentRoutes);
 module.exports = app;
