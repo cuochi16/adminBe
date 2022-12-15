@@ -17,6 +17,8 @@ import {
     Modal,
     Popconfirm
   } from "antd";
+  import Main from "../components/layout/Main";
+  import {  Form, Input,  DatePicker, Select,} from "antd";
 
   import React from 'react';
   import { getAllPosts,deletePost} from "../services/postService";
@@ -48,17 +50,26 @@ import {
     },
   };
   
-  
   function Tables() {
-    
-
-
     const [postId, setPostId] = useState(0);
     const [post, setPost] = useState([]);
     const getPost = async (id) => {
       const res = await axios.get("http://localhost:8000/post/"+id)
       setPost(res.data.post)
       console.log(post)
+    }
+    const truncateStr = (str, length, ending) => {
+      if (length == null) {
+        length = 100;
+      }
+      if (ending == null) {
+        ending = '...';
+      }
+      if (str.length > length) {
+        return str.substring(0, length - ending.length) + ending;
+      } else {
+        return str;
+      }
     }
   // table code start
   const columns = [
@@ -72,13 +83,29 @@ import {
       title: "CONTENT",
       dataIndex: "content",
       key: "content",
-      width: "40%",
+      width: "20%",
     },
   
     {
       title: "IMAGES",
       key: "images",
-      dataIndex: "images",
+      render: (_, record) => (
+        <>
+          <Button
+            style={{ marginRight: "16px", color: "#FFF", backgroundColor: "#E94057" }}
+            onClick={() => {
+              console.log(record._id);
+              setPostId(record._id);
+              getPost(record._id);
+              console.log(post);
+              showModalPreview();
+            }}
+            // onClick={showModal}
+          >
+            Preview
+          </Button>
+        </>
+      ),
     },
     {
       title: "CREATEDAT",
@@ -96,7 +123,7 @@ import {
       render: (_, record) => (
         <>
           <Button
-            style={{ marginRight: "16px", color: "blue" }}
+            style={{ marginRight: "16px", color: "#FFF", backgroundColor: "#E94057" }}
             onClick={() => {
               console.log(record._id);
               setPostId(record._id);
@@ -123,15 +150,20 @@ import {
 
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalAddOpen, setIsModalAddOpen] = useState(false);
+  const [isModalPreview, setIsModalPreview] = useState(false);
   const showModalEdit = () => {
     setIsModalEditOpen(true);
   };
   const showModalAdd = () => {
     setIsModalAddOpen(true);
   };
+  const showModalPreview = () => {
+    setIsModalPreview(true);
+  };
   const handleCancel = () => {
     setIsModalEditOpen(false);
     setIsModalAddOpen(false);
+    setIsModalPreview(false);
     setPost([]);
   };
 
@@ -143,10 +175,12 @@ import {
         // console.log(res);
         const newData = res.data.posts.map((p)=>{
           return {
+            _id:p._id,
             name:p.user.name,
-            content:p.content,
+            content: truncateStr(`${p.content}`,40,'...'),
             createdat:p.createdAt,
-            updatedat:p.updatedAt
+            updatedat:p.updatedAt,
+            image:p.image
           }
         });
         setData(newData);
@@ -162,9 +196,7 @@ import {
   
   const onFinishupdate = async (values) => {
     try {
-      const response = await axios.put("http://localhost:8000/post/" + postId, {
-        ...values,
-      });
+      const response = await axios.put("http://localhost:8000/post/" + postId, {...values,});
       if (response.status === 200) {
         console.log("Update successfully");
         setPost([]);
@@ -173,6 +205,7 @@ import {
       console.log(err);
     }
     console.log("Success:", values);
+    setPost([]);
     setIsModalEditOpen(false);
   };
 
@@ -191,8 +224,10 @@ import {
     setIsModalAddOpen(false);
   };
 
+
     return (
-      <>
+      <Main>
+        <>
         <div className="tabled">
         <div className="add">
             <Button onClick={showModalAdd}>Add</Button>
@@ -216,12 +251,104 @@ import {
             </Col>
           </Row>
         </div>
-        <Modal title="Basic Modal" open={isModalEditOpen} onCancel={handleCancel}>
-                  <p>Some contents...</p>
-                  <p>Some contents...</p>
-                  <p>Some contents...</p>
-                </Modal>
+        {post.length !==0 && (
+          <Modal title="Update post" open={isModalEditOpen} onCancel={handleCancel} footer={null}>
+            <Form {...layout} name="nest-messages" onFinish={onFinishupdate} validateMessages={validateMessages} 
+            initialValues={{
+              name:post.user.name,
+              content:post.content,
+              like:post.like,
+              createdAt:post.createdAt,
+              updatedAt:post.updatedAt,
+            }}
+            >
+              <Form.Item
+                name="name"
+                label="Name"
+
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input disabled/>
+              </Form.Item>
+              <Form.Item
+                name="content"
+                label="Content"
+                rules={[
+                  {
+                    type: 'content',
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="createdAt"
+                label="Created At"
+                rules={[
+                  {
+                    type: 'createdAt',
+                  },
+                ]}
+              >
+                <Input disabled/>
+              </Form.Item>
+              <Form.Item
+                name="updatedAt"
+                label="Updated At"
+                rules={[
+                  {
+                    type: 'updatedAt',
+                  },
+                ]}
+              >
+                <Input disabled/>
+              </Form.Item>
+              <Form.Item
+                name="like"
+                label="Like"
+                rules={[
+                  {
+                    type: 'like',
+                  },
+                ]}
+              >
+                <Input disabled/>
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  ...layout.wrapperCol,
+                  offset: 8,
+                }}
+              >
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+        )}
+        <Modal title="Basic Modal" open={isModalAddOpen} onCancel={handleCancel}>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
+        {post.length !==0 && (
+        <Modal open={isModalPreview} footer={null} onCancel={handleCancel}>
+        <img
+          alt="example"
+          style={{
+            width: '100%',
+          }}
+          src={post.image}
+        />
+      </Modal>
+        )}
       </>
+      </Main>
     );
   }
   

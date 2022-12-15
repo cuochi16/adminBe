@@ -7,7 +7,6 @@ import User from "./pages/Users";
 import Match from "./pages/Match";
 import Global from "./pages/Global";
 import Signin from "./pages/SignIn";
-import Main from "./components/layout/Main";
 import "antd/dist/antd.css";
 import "./assets/styles/main.css";
 import "./assets/styles/responsive.css";
@@ -15,7 +14,6 @@ import "./assets/styles/responsive.css";
 function App() {
   return (
     <div className="App">
-      <Main>
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/billing" element={<Billing />} />
@@ -25,7 +23,6 @@ function App() {
         <Route path="/global" element={<Global />} />
         <Route path="/" element={<Signin />} />
       </Routes>
-      </Main>
     </div>
   );
 }

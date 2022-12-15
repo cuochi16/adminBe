@@ -19,6 +19,7 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import { getAllUsers, deleteUser } from "../services/userService";
 import Echart from "../components/chart/EChart";
 import LineChart from "../components/chart/LineChart";
+import Main from "../components/layout/Main";
 
 import ava1 from "../assets/images/team-1.jpg";
 import ava2 from "../assets/images/team-2.jpg";
@@ -219,7 +220,8 @@ function Home() {
       .catch((err) => console.log(err));
   }, [data]);
   return (
-    <>
+    <Main>
+      <>
       <div className="layout-content">
         <Row className="rowgap-vbox" gutter={[24, 0]}>
           {count.map((c, index) => (
@@ -332,6 +334,7 @@ function Home() {
         </Row>
       </div>
     </>
+    </Main>
   );
 }
 

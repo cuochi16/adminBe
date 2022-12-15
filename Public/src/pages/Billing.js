@@ -10,6 +10,7 @@ import {
 } from "antd";
 
 import { PlusOutlined, ExclamationOutlined } from "@ant-design/icons";
+import Main from "../components/layout/Main";
 import mastercard from "../assets/images/mastercard-logo.png";
 import paypal from "../assets/images/paypal-logo-2.png";
 
@@ -306,7 +307,8 @@ function Billing() {
   ];
 
   return (
-    <>
+    <Main>
+      <>
       <Row gutter={[24, 0]}>
         <Col xs={24} md={16}>
           <Row gutter={[24, 0]}>
@@ -531,6 +533,7 @@ function Billing() {
         </Col>
       </Row>
     </>
+    </Main>
   );
 }
 

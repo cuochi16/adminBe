@@ -24,6 +24,7 @@ import {
   Upload,
   message,
 } from "antd";
+import Main from "../components/layout/Main";
 
 import {
   FacebookOutlined,
@@ -158,7 +159,8 @@ function Profile() {
   ];
 
   return (
-    <>
+    <Main>
+      <>
       <div
         className="profile-nav-bg"
         style={{ backgroundImage: "url(" + BgProfile + ")" }}
@@ -369,6 +371,7 @@ function Profile() {
         </Row>
       </Card>
     </>
+    </Main>
   );
 }
 
