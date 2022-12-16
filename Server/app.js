@@ -7,6 +7,7 @@ const orderRoute = require('./route/orderRoute');
 const postRoute = require('./route/postRoute');
 const commentRoutes = require('./route/commentRoutes');
 const typeRoute = require('./route/typeRoute')
+const supportRoute = require('./route/supportRoute');
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(
 app.use('/user',userRoute);
 app.use('/post',postRoute);
 app.use('/order',orderRoute);
+app.use('/support',supportRoute)
 app.use("/comments",commentRoutes);
 app.use("/types", typeRoute);
 module.exports = app;

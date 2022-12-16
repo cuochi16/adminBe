@@ -22,7 +22,7 @@ exports.updateOrder = async(req,res,next) => {
     console.log(order);
     return res.status(200).json({
         status:"success",
-        courorderse
+        order
     })
 }
 
