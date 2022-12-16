@@ -9,10 +9,12 @@ import {
   Avatar,
 } from "antd";
 
+import { useEffect,useState } from "react";
 import { PlusOutlined, ExclamationOutlined } from "@ant-design/icons";
 import Main from "../components/layout/Main";
 import mastercard from "../assets/images/mastercard-logo.png";
 import paypal from "../assets/images/paypal-logo-2.png";
+import { getAllOrders} from "../services/orderService";
 
 function Billing() {
   const data = [
@@ -198,25 +200,26 @@ function Billing() {
     </svg>,
   ];
 
-  const information = [
-    {
-      title: "Oliver Liam",
-      description: "Viking Burrito",
-      address: "oliver@burrito.com",
-      vat: "FRB1235476",
-    },
-    {
-      title: "Lucas Harper",
-      description: "Stone Tech Zone",
-      address: "lucas@syone-tech.com",
-      vat: "FRB1235476",
-    },
-    {
-      title: "Oliver Liam",
-      description: "ethan@fiber.com",
-      vat: "NumberFRB1235476",
-    },
-  ];
+    const [information, setInformation] = useState([]);
+    useEffect(() => {
+      getAllOrders()
+        .then((res) => {
+          // console.log(res);
+          const newData = res.information.orders.map((p)=>{
+            return {
+              _id:p._id,
+              name:p.user.name,
+              type:p.type.name,
+              isDone:p.isDone,
+              createdat:p.createdAt,
+              updatedat:p.updatedAt
+            }
+          });
+          setInformation(newData);
+        })
+        .catch((err) => console.log(err));
+    }, [information]);
+
   const calender = [
     <svg
       width="18"
@@ -444,16 +447,18 @@ function Billing() {
                 <Col span={24} key={index}>
                   <Card className="card-billing-info" bordered="false">
                     <div className="col-info">
-                      <Descriptions title="Oliver Liam">
-                        <Descriptions.Item label="Company Name" span={3}>
-                          Viking Burrito
+                      <Descriptions title={information.user.name}>
+                        <Descriptions.Item label="Type" span={3}>
+                          {information.type.name}
                         </Descriptions.Item>
-
-                        <Descriptions.Item label="Email Address" span={3}>
-                          oliver@burrito.com
+                        <Descriptions.Item label="isDone" span={3}>
+                          {information.isDone}
                         </Descriptions.Item>
-                        <Descriptions.Item label="VAT Number" span={3}>
-                          FRB1235476
+                        <Descriptions.Item label="Creat at" span={3}>
+                          {information.createdAt}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Update at" span={3}>
+                          {information.updatedAt}
                         </Descriptions.Item>
                       </Descriptions>
                     </div>

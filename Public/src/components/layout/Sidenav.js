@@ -144,16 +144,16 @@ function Sidenav({ color }) {
           </NavLink>
         </Menu.Item>
         <Menu.Item key="5">
-          <NavLink to="/match">
+          <NavLink to="/support">
             <span
               className="icon"
               style={{
-                background: page === "match" ? color : "",
+                background: page === "support" ? color : "",
               }}
             >
               {match}
             </span>
-            <span className="label">Match</span>
+            <span className="label">Support</span>
           </NavLink>
         </Menu.Item>
         <Menu.Item key="6">
