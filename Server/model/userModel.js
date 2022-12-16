@@ -23,6 +23,10 @@ const userSchema = new Schema({
     address: {
         type: String
     },
+    type:{
+        type: String,
+        default:"normal"
+    },
     role: {
         type: String
     },

@@ -8,41 +8,18 @@ import {
   Descriptions,
   Avatar,
 } from "antd";
+import { useEffect,useState } from "react";
 
 import { PlusOutlined, ExclamationOutlined } from "@ant-design/icons";
 import Main from "../components/layout/Main";
 import mastercard from "../assets/images/mastercard-logo.png";
 import paypal from "../assets/images/paypal-logo-2.png";
+import { getAllOrders,deleteOrder} from "../services/orderService";
+import axios from "axios";
+
 
 function Billing() {
-  const data = [
-    {
-      title: "March, 01, 2021",
-      description: "#MS-415646",
-      amount: "$180",
-    },
-    {
-      title: "February, 12, 2021",
-      description: "#RV-126749",
-      amount: "$250",
-    },
-    {
-      title: "April, 05, 2020",
-      description: "#FB-212562",
-      amount: "$550",
-    },
-    {
-      title: "June, 25, 2019",
-      description: "#QW-103578",
-      amount: "$400",
-    },
-    {
-      title: "March, 03, 2019",
-      description: "#AR-803481",
-      amount: "$700",
-    },
-  ];
-
+ 
   const wifi = [
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -143,42 +120,7 @@ function Billing() {
     </svg>,
   ];
 
-  const pencil = [
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      key={0}
-    >
-      <path
-        d="M13.5858 3.58579C14.3668 2.80474 15.6332 2.80474 16.4142 3.58579C17.1953 4.36683 17.1953 5.63316 16.4142 6.41421L15.6213 7.20711L12.7929 4.37868L13.5858 3.58579Z"
-        className="fill-gray-7"
-      ></path>
-      <path
-        d="M11.3787 5.79289L3 14.1716V17H5.82842L14.2071 8.62132L11.3787 5.79289Z"
-        className="fill-gray-7"
-      ></path>
-    </svg>,
-  ];
-  const download = [
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      key="0"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M3 17C3 16.4477 3.44772 16 4 16H16C16.5523 16 17 16.4477 17 17C17 17.5523 16.5523 18 16 18H4C3.44772 18 3 17.5523 3 17ZM6.29289 9.29289C6.68342 8.90237 7.31658 8.90237 7.70711 9.29289L9 10.5858L9 3C9 2.44772 9.44771 2 10 2C10.5523 2 11 2.44771 11 3L11 10.5858L12.2929 9.29289C12.6834 8.90237 13.3166 8.90237 13.7071 9.29289C14.0976 9.68342 14.0976 10.3166 13.7071 10.7071L10.7071 13.7071C10.5196 13.8946 10.2652 14 10 14C9.73478 14 9.48043 13.8946 9.29289 13.7071L6.29289 10.7071C5.90237 10.3166 5.90237 9.68342 6.29289 9.29289Z"
-        fill="#111827"
-      ></path>
-    </svg>,
-  ];
+
   const deletebtn = [
     <svg
       width="16"
@@ -198,43 +140,64 @@ function Billing() {
     </svg>,
   ];
 
-  const information = [
-    {
-      title: "Oliver Liam",
-      description: "Viking Burrito",
-      address: "oliver@burrito.com",
-      vat: "FRB1235476",
-    },
-    {
-      title: "Lucas Harper",
-      description: "Stone Tech Zone",
-      address: "lucas@syone-tech.com",
-      vat: "FRB1235476",
-    },
-    {
-      title: "Oliver Liam",
-      description: "ethan@fiber.com",
-      vat: "NumberFRB1235476",
-    },
-  ];
-  const calender = [
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      key={0}
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M6 2C5.44772 2 5 2.44772 5 3V4H4C2.89543 4 2 4.89543 2 6V16C2 17.1046 2.89543 18 4 18H16C17.1046 18 18 17.1046 18 16V6C18 4.89543 17.1046 4 16 4H15V3C15 2.44772 14.5523 2 14 2C13.4477 2 13 2.44772 13 3V4H7V3C7 2.44772 6.55228 2 6 2ZM6 7C5.44772 7 5 7.44772 5 8C5 8.55228 5.44772 9 6 9H14C14.5523 9 15 8.55228 15 8C15 7.44772 14.5523 7 14 7H6Z"
-        fill="#111827"
-        className="fill-muted"
-      ></path>
-    </svg>,
-  ];
+  const [price,setPrice] = useState(0);
+  const getTotal = async () =>{
+    const res = await axios.get("http://localhost:8000/order/successful");
+    console.log(res)
+  }
+  
+  
+
+  const [information,setInformation] = useState([]);
+  useEffect(() => {
+    getAllOrders()
+      .then((res) => {
+        const newData = res.data.orders.map((o)=>{
+          return {
+            _id:o._id,
+            name:o.user.name,
+            userID:o.user._id,
+            type: o.type.name,
+            price:o.type.price,            
+            isDone:o.isDone,
+            createdAt:o.createdAt,
+            updatedAt:o.updatedAt,
+          }
+        });
+        setInformation(newData);
+      })
+      .catch((err) => console.log(err));
+  }, [information]);
+
+  
+  useEffect(() => {
+    getAllOrders()
+    .then((res) => {
+      const newData = res.data.orders.map((t)=>{
+        return {          
+          name:t.user.name,
+          price: t.type.price,            
+          isDone:t.isDone,
+        }
+      }).filter((o)=>o.isDone==="successful");
+      console.log(newData);
+      let total = 0;
+      for(const i in newData){
+        console.log(newData[i].price);
+        total = total + newData[i].price;
+      }
+      setPrice(total);
+    })
+  }, []);
+
+  const handleOrder = async (userID,orderID) =>{
+    const res = await axios.patch("http://localhost:8000/order/",{userID,orderID})
+    console.log(res)
+  }
+  const handleCancel = async (orderID) =>{
+    const res = await axios.patch("http://localhost:8000/order/",{orderID})
+    console.log(res)
+  }
   const mins = [
     <svg
       width="10"
@@ -251,25 +214,6 @@ function Billing() {
         className="fill-danger"
       ></path>
     </svg>,
-  ];
-  const newest = [
-    {
-      headding: <h6>NEWEST</h6>,
-      avatar: mins,
-      title: "Netflix",
-      description: "27 March 2021, at 12:30 PM",
-      amount: "- $2,500",
-      textclass: "text-light-danger",
-      amountcolor: "text-danger",
-    },
-    {
-      avatar: <PlusOutlined style={{ fontSize: 10 }} />,
-      title: "Apple",
-      description: "27 March 2021, at 04:30 AM",
-      amount: "+ $2,000",
-      textclass: "text-fill",
-      amountcolor: "text-success",
-    },
   ];
   const yesterday = [
     {
@@ -296,15 +240,8 @@ function Billing() {
       textclass: "text-fill",
       amountcolor: "text-success",
     },
-    {
-      avatar: <ExclamationOutlined style={{ fontSize: 10 }} />,
-      title: "Webflow",
-      description: "26 March 2021, at 04:00 AM",
-      amount: "Pending",
-      textclass: "text-warning",
-      amountcolor: "text-warning-b",
-    },
   ];
+
 
   return (
     <Main>
@@ -312,127 +249,6 @@ function Billing() {
       <Row gutter={[24, 0]}>
         <Col xs={24} md={16}>
           <Row gutter={[24, 0]}>
-            <Col xs={24} xl={12} className="mb-24">
-              <Card
-                title={wifi}
-                bordered={false}
-                className="card-credit header-solid h-ful"
-              >
-                <h5 className="card-number">5360 3274 7440 2823</h5>
-
-                <div className="card-footer">
-                  <div className="mr-30">
-                    <p>Card Holder</p>
-                    <h6>Quach Cong Tuan</h6>
-                  </div>
-                  <div className="mr-30">
-                    <p>Expires</p>
-                    <h6>06/27</h6>
-                  </div>
-                  <div className="card-footer-col col-logo ml-auto">
-                    <img src={mastercard} alt="mastercard" />
-                  </div>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={12} xl={6} className="mb-24">
-              <Card bordered={false} className="widget-2 h-full">
-                <Statistic
-                  title={
-                    <>
-                      <div className="icon">{angle}</div>
-                      <h6>Salary</h6>
-                      <p>Belong Interactive</p>
-                    </>
-                  }
-                  value={"$2,000"}
-                  prefix={<PlusOutlined />}
-                />
-              </Card>
-            </Col>
-            <Col xs={12} xl={6} className="mb-24">
-              <Card bordered={false} className="widget-2 h-full">
-                <Statistic
-                  title={
-                    <>
-                      <div className="icon">
-                        <img src={paypal} alt="paypal" />
-                      </div>
-                      <h6>Paypal</h6>
-                      <p>Freelance Paymente</p>
-                    </>
-                  }
-                  value={"$49,000"}
-                  prefix={<PlusOutlined />}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} className="mb-24">
-              <Card
-                className="header-solid h-full ant-card-p-0"
-                title={
-                  <>
-                    <Row
-                      gutter={[24, 0]}
-                      className="ant-row-flex ant-row-flex-middle"
-                    >
-                      <Col xs={24} md={12}>
-                        <h6 className="font-semibold m-0">Payment Methods</h6>
-                      </Col>
-                      <Col xs={24} md={12} className="d-flex">
-                        <Button type="primary">ADD NEW CARD</Button>
-                      </Col>
-                    </Row>
-                  </>
-                }
-              >
-                <Row gutter={[24, 0]}>
-                  <Col span={24} md={12}>
-                    <Card className="payment-method-card">
-                      <img src={mastercard} alt="mastercard" />
-                      <h6 className="card-number">**** **** **** 2823</h6>
-                      <Button type="link" className="ant-edit-link">
-                        {pencil}
-                      </Button>
-                    </Card>
-                  </Col>
-                </Row>
-              </Card>
-            </Col>
-          </Row>
-        </Col>
-        <Col span={24} md={8} className="mb-24">
-          <Card
-            bordered={false}
-            className="header-solid h-full ant-invoice-card"
-            title={[<h6 className="font-semibold m-0">Invoices</h6>]}
-            extra={[
-              <Button type="primary">
-                <span>VIEW ALL</span>
-              </Button>,
-            ]}
-          >
-            <List
-              itemLayout="horizontal"
-              className="invoice-list"
-              dataSource={data}
-              renderItem={(item) => (
-                <List.Item
-                  actions={[<Button type="link">{download} PDF</Button>]}
-                >
-                  <List.Item.Meta
-                    title={item.title}
-                    description={item.description}
-                  />
-                  <div className="amount">{item.amount}</div>
-                </List.Item>
-              )}
-            />
-          </Card>
-        </Col>
-      </Row>
-      <Row gutter={[24, 0]}>
-        <Col span={24} md={16} className="mb-24">
           <Card
             className="header-solid h-full"
             bordered={false}
@@ -442,93 +258,106 @@ function Billing() {
             <Row gutter={[24, 24]}>
               {information.map((i, index) => (
                 <Col span={24} key={index}>
+                {i.isDone==="pending"&&
                   <Card className="card-billing-info" bordered="false">
                     <div className="col-info">
-                      <Descriptions title="Oliver Liam">
-                        <Descriptions.Item label="Company Name" span={3}>
-                          Viking Burrito
+                        <Descriptions title={i.name}>
+                        <Descriptions.Item label="Type" span={3}>
+                        {i.type}
                         </Descriptions.Item>
-
-                        <Descriptions.Item label="Email Address" span={3}>
-                          oliver@burrito.com
+                        <Descriptions.Item label="Status" span={3}>
+                        <h1 Style="color: #f0bc1d; font-weight: 550">Pending</h1>
                         </Descriptions.Item>
-                        <Descriptions.Item label="VAT Number" span={3}>
-                          FRB1235476
-                        </Descriptions.Item>
-                      </Descriptions>
+                        </Descriptions>
                     </div>
+                    {i.isDone==="pending" && (
                     <div className="col-action">
-                      <Button type="link" danger>
-                        {deletebtn}DELETE
+                      <Button Style="color:#FFF; background-color:green;padding-bottom:40px" type="link" className="darkbtn" onClick={()=>handleOrder(i.userID,i._id)}>
+                        Confirm
                       </Button>
-                      <Button type="link" className="darkbtn">
-                        {pencil} EDIT
+                      <Button type="link" danger onClick={()=>handleCancel(i._id)}>
+                        {deletebtn}CANCEL
                       </Button>
                     </div>
+                    )}
                   </Card>
+            }
                 </Col>
               ))}
             </Row>
           </Card>
+          </Row>
         </Col>
         <Col span={24} md={8} className="mb-24">
+          <Row gutter={[24,0]}>
+          <Col xs={24}  className="mb-24">
+              <Card bordered={false} className="widget-2 h-full">
+                <Statistic
+                  title={
+                    <>
+                      <div className="icon">{angle}</div>
+                      <h6>Salary</h6>
+                      <p>Total revenue</p>
+                    </>
+                  }
+                  value={price}
+                  prefix={<PlusOutlined />}
+                />
+              </Card>
+            </Col>
+          </Row>
           <Card
             bordered={false}
             bodyStyle={{ paddingTop: 0 }}
             className="header-solid h-full  ant-list-yes"
             title={<h6 className="font-semibold m-0">Your Transactions</h6>}
-            extra={
-              <p className="card-header-date">
-                {calender}
-                <span>23 - 30 March 2021</span>
-              </p>
+            >
+            {information.isDone!=="pending" &&
+              <List
+                className="yestday transactions-list"
+                header={<h6>HISTORY</h6>}
+                itemLayout="horizontal"
+                dataSource={information}
+                renderItem={(item) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={item.name}
+                    />
+                    {item.isDone==="successful" && 
+                    <div className="amount">
+                      <span Style="color:green">+{item.price}</span>
+                    </div>}
+                    {item.isDone==="unsuccessful" && 
+                    <div className="amount">
+                      <span Style="color:#ed6060;">Cancelled</span>
+                    </div>}
+                  </List.Item>
+                )}
+              />
             }
-          >
-            <List
-              header={<h6>NEWEST</h6>}
-              className="transactions-list ant-newest"
-              itemLayout="horizontal"
-              dataSource={newest}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar size="small" className={item.textclass}>
-                        {item.avatar}
-                      </Avatar>
-                    }
-                    title={item.title}
-                    description={item.description}
-                  />
-                  <div className="amount">
-                    <span className={item.amountcolor}>{item.amount}</span>
-                  </div>
-                </List.Item>
-              )}
-            />
-
-            <List
-              className="yestday transactions-list"
-              header={<h6>YESTERDAY</h6>}
-              itemLayout="horizontal"
-              dataSource={yesterday}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar size="small" className={item.textclass}>
-                        {item.avatar}
-                      </Avatar>
-                    }
-                    title={item.title}
-                    description={item.description}
-                  />
-                  <div className="amount">
-                    <span className={item.amountcolor}>{item.amount}</span>
-                  </div>
-                </List.Item>
-              )}
-            />
+            {information.isDone==="unsuccessful" &&
+              <List
+                className="yestday transactions-list"
+                header={<h6>HISTORY</h6>}
+                itemLayout="horizontal"
+                dataSource={information}
+                renderItem={(item) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={item.name}
+                      description={item.description}
+                    />
+                    {item.isDone==="successful" && 
+                    <div className="amount">
+                      <span Style="color:green">+{item.price}</span>
+                    </div>}
+                    {item.isDone==="unsuccessful" && 
+                    <div className="amount">
+                      <span Style="color:#ed6060;">Cancelled</span>
+                    </div>}
+                  </List.Item>
+                )}
+              />}
           </Card>
         </Col>
       </Row>

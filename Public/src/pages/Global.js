@@ -229,9 +229,9 @@ import {
       <Main>
         <>
         <div className="tabled">
-        <div className="add">
+        {/* <div className="add">
             <Button onClick={showModalAdd}>Add</Button>
-          </div>
+          </div> */}
           <Row gutter={[24, 0]}>
             <Col xs="24" xl={24}>
               <Card

@@ -9,5 +9,7 @@ router.put('/:id',orderController.updateOrder);
 router.delete('/:id',orderController.deleteOrder);
 router.get('/',orderController.getAll);
 router.get('/:id',orderController.getById);
+router.patch('/',orderController.handleorder);
+router.get('/successful',orderController.totalMoney);
 
 module.exports = router;
